@@ -1,0 +1,3 @@
+C:\Users\quent\Documents\ETH\6. Semester\Bachelor Thesis\CODE\UNITY\ReCover Pacman\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\CMakeLists.txt
+C:\Users\quent\Documents\ETH\6. Semester\Bachelor Thesis\CODE\UNITY\ReCover Pacman\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\FramePacing\CMakeLists.txt
+C:\Users\quent\Documents\ETH\6. Semester\Bachelor Thesis\CODE\UNITY\ReCover Pacman\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\GameActivity\CMakeLists.txt
