@@ -13,6 +13,11 @@ public class LogicScript : MonoBehaviour
     public TextMeshProUGUI scoreText; // ← use TMP type here
     public TextMeshProUGUI livesText; // <<< ADDED: Assign your Lives Text UI element in Inspector
     public GameObject gameOverPanel; // <<< ADDED: Assign your Game Over UI Panel in Inspector
+    // --- Added for Sound ---
+    public AudioClip coinSound; // Assign your coin sound clip in the Inspector
+    public AudioClip gameOverSound; // Assign your game over sound clip in the Inspector
+    private AudioSource audioSource; // Reference to the AudioSource component
+    // -----------------------
 
 
     // [ContextMenu("Add Score")]
@@ -30,6 +35,12 @@ public class LogicScript : MonoBehaviour
         }
         // Ensure game runs at normal speed at start
         Time.timeScale = 1f;
+        // Attempt to find AudioSource if not assigned in Inspector
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
     public void addScore(int scoreToAdd)
     {
@@ -37,6 +48,9 @@ public class LogicScript : MonoBehaviour
         if (playerLives <= 0) return;
         playerScore += scoreToAdd; // Add the score to the player's score
         UpdateScoreText(); // Update the score text on the screen
+        if (scoreToAdd==1){
+            PlayCoinSound(); // --- Added: Play coin sound when score is added
+        }
     }
     public void UpdateScoreText()
     {
@@ -51,6 +65,7 @@ public class LogicScript : MonoBehaviour
         if (playerLives <= 0) return;
 
         playerLives--; // Decrement lives
+        //could also play losing life/ hurt sound here but its in the Pacman script
         UpdateLivesText(); // Update UI
 
         if (playerLives <= 0)
@@ -79,6 +94,7 @@ public class LogicScript : MonoBehaviour
         // Stop the game (pause time is a simple way)
         Time.timeScale = 0f; // Pauses FixedUpdate, Update calls tied to physics time.
         // NOTE: Input reading in Update might still occur, handle in PacmanScript if needed.
+        PlayGameOverSound(); 
     }
 
     public void RestartGame()
@@ -87,4 +103,19 @@ public class LogicScript : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name); // Restart the game by reloading the current scene
     }
     
+    void PlayCoinSound()
+    {
+        if (audioSource != null && coinSound != null)
+        {
+            audioSource.PlayOneShot(coinSound); // Play the coin sound once
+        }
+    }
+
+    void PlayGameOverSound()
+    {
+        if (audioSource != null && gameOverSound != null)
+        {
+            audioSource.PlayOneShot(gameOverSound); // Play the game over sound once
+        }
+    }
 }
