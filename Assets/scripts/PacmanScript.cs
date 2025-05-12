@@ -31,7 +31,7 @@ public class PacmanScript : MonoBehaviour
     public Rigidbody2D Pacmanbody; // Reference to the Rigidbody2D component
     public float moveSpeed = 5f;   // Speed multiplier for movement
     private float moveInput;
-    public LogicScript logic; // Assign this in the Inspector
+    public LogicScript logic; // Assign this in the aInspector
 
     void Start()
     {
@@ -41,7 +41,7 @@ public class PacmanScript : MonoBehaviour
             // logic = FindObjectOfType<LogicScript>();
             logic = GameObject.FindGameObjectWithTag("Logic").GetComponent<LogicScript>();
         }
-        
+
         if (logic == null)
         {
             Debug.LogError("PacmanScript could not find LogicScript!");
@@ -69,6 +69,40 @@ public class PacmanScript : MonoBehaviour
         {
              // Optionally stop Pacman completely when paused
              Pacmanbody.linearVelocity = Vector2.zero;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        Debug.Log("Trigger Pacman ghost, object " + other.gameObject.name);
+        HandleGhostCollision(other.gameObject);
+    }
+
+    private void HandleGhostCollision(GameObject collidedObject)
+    {
+        // Check if the collided object has the tag "Ghost"
+        if (collidedObject.CompareTag("Ghost"))
+        {
+            Debug.Log("Collided with Ghost!");
+
+            // Destroy the specific ghost instance Pacman collided with
+            Destroy(collidedObject);
+
+            // Tell the LogicScript to decrease a life
+            if (logic != null)
+            {
+                logic.LoseLife();
+            }
+            else
+            {
+                Debug.LogError("LogicScript reference missing in PacmanScript!");
+            }
+
+            // === Optional Enhancements ===
+            // - Play a 'hurt' sound effect
+            // - Trigger a visual effect (e.g., flashing Pacman sprite)
+            // - Add temporary invincibility (requires more state tracking)
+            // - Apply knockback to Pacman (e.g., Pacmanbody.AddForce(...))
         }
     }
 }

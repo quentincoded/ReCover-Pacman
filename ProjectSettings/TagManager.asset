@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Logic
+  - Ghost
   layers:
   - Default
   - TransparentFX
