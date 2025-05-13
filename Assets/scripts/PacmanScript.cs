@@ -96,33 +96,6 @@ public class PacmanScript : MonoBehaviour
         HandleGhostCollision(other.gameObject);
     }
 
-    // private void HandleGhostCollision(GameObject collidedObject)
-    // {
-    //     // Check if the collided object has the tag "Ghost"
-    //     if (collidedObject.CompareTag("Ghost")&& )
-    //     {
-    //         Debug.Log("Collided with Ghost!");
-
-    //         // Destroy the specific ghost instance Pacman collided with
-    //         Destroy(collidedObject);
-
-    //         // Tell the LogicScript to decrease a life
-    //         if (logic != null)
-    //         {
-    //             logic.LoseLife();
-    //         }
-    //         else
-    //         {
-    //             Debug.LogError("LogicScript reference missing in PacmanScript!");
-    //         }
-
-    //         // === Optional Enhancements ===
-    //         // - Play a 'hurt' sound effect
-    //         // - Trigger a visual effect (e.g., flashing Pacman sprite)
-    //         // - Add temporary invincibility (requires more state tracking)
-    //         // - Apply knockback to Pacman (e.g., Pacmanbody.AddForce(...))
-    //     }
-    // }
     private void HandleGhostCollision(GameObject collidedObject)
     {
         // Check if the collided object has the tag "Ghost" and Pacman is not invincible
