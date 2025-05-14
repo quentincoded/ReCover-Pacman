@@ -76,12 +76,20 @@ public class PacmanScript : MonoBehaviour
     void Update()
     {
         // Only allow movement if the game is not paused (Time.timeScale > 0)
+        int superSize = 1; 
+            if (Keyboard.current.pKey.wasPressedThisFrame)
+            {
+            string filename = $"Screenshot_{System.DateTime.Now:yyyyMMdd_HHmmss}.png";
+            ScreenCapture.CaptureScreenshot(filename, superSize);
+            Debug.Log($"Screenshot saved: {filename}");
+            }
         if (Time.timeScale > 0f)
         {
             moveInput = Keyboard.current.leftArrowKey.isPressed ? -1 :
                         Keyboard.current.rightArrowKey.isPressed ? 1 : 0;
             // Use velocity for potentially smoother physics interaction
             Pacmanbody.linearVelocity = new Vector2(moveInput * moveSpeed, Pacmanbody.linearVelocity.y);
+            
         }
         else
         {
