@@ -45,6 +45,20 @@ public class PacmanScript : MonoBehaviour
     private bool isInvincible = false; // To prevent losing multiple lives at once
     public float invincibilityDuration = 1.0f; // Duration of invincibility after being hit
 
+    public GameObject mouthClosedSprite; // closed sprite GameObject
+    public GameObject mouthQuarterClosedSprite; // nearly closed sprite GameObject
+    public GameObject mouthHalfOpenSprite; // half open sprite GameObject
+    public GameObject mouthQuarterOpenSprite; // mouth nearly open sprite GameObject
+    public GameObject mouthOpenSprite; // mouth fully open sprite GameObject
+
+    public enum MouthState { Closed,QuarterClosed, HalfOpen, QuarterOpen, Open }; //0=closed, 1=quarter closed, 2=half open, 3=quarter open, 4=open
+    private MouthState currentMouthState = MouthState.Closed;
+
+    public bool IsMouthOpen
+    {
+        get { return (int)currentMouthState >= (int)MouthState.HalfOpen; } // Cast to int for comparison
+    }
+
     void Start()
     {
         // Attempt to find LogicScript if not assigned in Inspector
@@ -70,12 +84,13 @@ public class PacmanScript : MonoBehaviour
         {
             audioSource = gameObject.AddComponent<AudioSource>();
         }
+        UpdateMouthVisual();
     }
 
 
     void Update()
     {
-        // Only allow movement if the game is not paused (Time.timeScale > 0)
+        
         int superSize = 1; 
             if (Keyboard.current.pKey.wasPressedThisFrame)
             {
@@ -83,18 +98,42 @@ public class PacmanScript : MonoBehaviour
             ScreenCapture.CaptureScreenshot(filename, superSize);
             Debug.Log($"Screenshot saved: {filename}");
             }
+
+        
+        // Only allow movement if the game is not paused (Time.timeScale > 0)
         if (Time.timeScale > 0f)
         {
+            // --- Horizontal Movement Input ---
             moveInput = Keyboard.current.leftArrowKey.isPressed ? -1 :
                         Keyboard.current.rightArrowKey.isPressed ? 1 : 0;
-            // Use velocity for potentially smoother physics interaction
             Pacmanbody.linearVelocity = new Vector2(moveInput * moveSpeed, Pacmanbody.linearVelocity.y);
-            
+            // ---------------------------------
+
+            // --- Mouth Opening Input (Keyboard Simulation) ---
+            // Use isPressed to keep mouth open while key is held
+            if (Keyboard.current.upArrowKey.isPressed)
+            {
+                // For simple keyboard control, set to fully open when pressed
+                currentMouthState = MouthState.Open; // Or cycle through states here if desired
+            }
+            else
+            {
+                // Set to closed when key is not pressed
+                currentMouthState = MouthState.Closed;
+            }
+            // -------------------------------------------------
+
+            // --- Update mouth visual based on the state ---
+            UpdateMouthVisual();
+            // ----------------------------------------------
         }
         else
         {
              // Optionally stop Pacman completely when paused
              Pacmanbody.linearVelocity = Vector2.zero;
+             // Ensure mouth is closed when game is paused
+             currentMouthState = MouthState.Closed;
+             UpdateMouthVisual();
         }
     }
 
@@ -174,4 +213,49 @@ public class PacmanScript : MonoBehaviour
         // Optional: Reset visual indication
         // pacmanSprite.color = originalColor; // Example reset transparency
     }
+    
+    
+    // --- Method to update mouth visual based on currentMouthState ---
+    void UpdateMouthVisual()
+    {
+        // Disable all mouth sprites first
+        if (mouthClosedSprite != null) mouthClosedSprite.SetActive(false);
+        if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(false); // Corrected Casing
+        if (mouthHalfOpenSprite != null) mouthHalfOpenSprite.SetActive(false);
+        if (mouthQuarterOpenSprite != null) mouthQuarterOpenSprite.SetActive(false);
+        if (mouthOpenSprite != null) mouthOpenSprite.SetActive(false);
+
+
+        // Enable the current mouth sprite based on the state
+        switch (currentMouthState)
+        {
+            case MouthState.Closed:
+                if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true);
+                break;
+            case MouthState.QuarterClosed:
+                if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true); // Corrected Casing
+                else if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true); // Fallback
+                break;
+            case MouthState.HalfOpen:
+                if (mouthHalfOpenSprite != null) mouthHalfOpenSprite.SetActive(true);
+                 else if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true); // Fallback (Corrected Casing)
+                 else if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true); // Fallback
+                break;
+            case MouthState.QuarterOpen:
+                 if (mouthQuarterOpenSprite != null) mouthQuarterOpenSprite.SetActive(true);
+                 else if (mouthHalfOpenSprite != null) mouthHalfOpenSprite.SetActive(true); // Fallback
+                 else if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true); // Fallback (Corrected Casing)
+                 else if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true); // Fallback
+                break;
+            case MouthState.Open:
+                if (mouthOpenSprite != null) mouthOpenSprite.SetActive(true);
+                else if (mouthQuarterOpenSprite != null) mouthQuarterOpenSprite.SetActive(true); // Fallback
+                else if (mouthHalfOpenSprite != null) mouthHalfOpenSprite.SetActive(true); // Fallback
+                else if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true); // Fallback (Corrected Casing)
+                else if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true); // Fallback
+                break;
+        }
+        // Debug.Log("Mouth state updated to: " + currentMouthState); // Keep this for debugging if needed
+    }
+    
 }
