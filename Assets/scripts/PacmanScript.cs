@@ -26,6 +26,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem; // Required for the new Input System
 using System.Collections; // Required for Coroutines
+using System.Collections.Generic; // Required for List
 
 public class PacmanScript : MonoBehaviour
 {
@@ -34,7 +35,7 @@ public class PacmanScript : MonoBehaviour
     private float moveInput;
     public LogicScript logic; // Assign this in the aInspector
     // --- Added for Feedback ---
-    public SpriteRenderer pacmanSprite; // Assign Pacman's SpriteRenderer here
+    // public SpriteRenderer pacmanSprite; // Assign Pacman's SpriteRenderer here
     public Color flashColor = Color.red; // Color to flash to
     public float flashDuration = 0.5f; // Duration of the flash effect
     public float flashInterval = 0.1f; // Time between flashes
@@ -50,6 +51,7 @@ public class PacmanScript : MonoBehaviour
     public GameObject mouthHalfOpenSprite; // half open sprite GameObject
     public GameObject mouthQuarterOpenSprite; // mouth nearly open sprite GameObject
     public GameObject mouthOpenSprite; // mouth fully open sprite GameObject
+    private List<GameObject> mouthSprites = new List<GameObject>();
 
     public enum MouthState { Closed,QuarterClosed, HalfOpen, QuarterOpen, Open }; //0=closed, 1=quarter closed, 2=half open, 3=quarter open, 4=open
     private MouthState currentMouthState = MouthState.Closed;
@@ -84,6 +86,12 @@ public class PacmanScript : MonoBehaviour
         {
             audioSource = gameObject.AddComponent<AudioSource>();
         }
+        // Add all mouth sprite GameObjects to the list
+        mouthSprites.Add(mouthClosedSprite);
+        mouthSprites.Add(mouthQuarterClosedSprite);
+        mouthSprites.Add(mouthHalfOpenSprite);
+        mouthSprites.Add(mouthQuarterOpenSprite);
+        mouthSprites.Add(mouthOpenSprite);
         UpdateMouthVisual();
     }
 
@@ -164,29 +172,51 @@ public class PacmanScript : MonoBehaviour
             }
 
             // --- Trigger Feedback Effects ---
-            StartCoroutine(FlashEffect());
+            // Find the currently active mouth sprite's SpriteRenderer
+            SpriteRenderer activeSpriteRenderer = GetActiveMouthSpriteRenderer();
+            if (activeSpriteRenderer != null)
+            {
+                StartCoroutine(FlashEffect(activeSpriteRenderer)); // Start flashing the active sprite
+            }
             PlayHurtSound();
             StartCoroutine(GainInvincibility());
             // ------------------------------
         }
     }
+    // Helper method to get the SpriteRenderer of the currently active mouth sprite
+    private SpriteRenderer GetActiveMouthSpriteRenderer()
+    {
+        foreach (GameObject mouthSprite in mouthSprites)
+        {
+            // Check if the GameObject is assigned and is currently active in the hierarchy
+            if (mouthSprite != null && mouthSprite.activeSelf)
+            {
+                // Return the SpriteRenderer component from the active GameObject
+                return mouthSprite.GetComponent<SpriteRenderer>();
+            }
+        }
+        // Return null if no active mouth sprite is found
+        return null;
+    }
 
     // --- Coroutine for Flashing Effect ---
-    IEnumerator FlashEffect()
+    IEnumerator FlashEffect(SpriteRenderer spriteToFlash)
     {
-        Color originalColor = pacmanSprite.color;
+        if (spriteToFlash == null) yield break; // Exit if no sprite renderer is provided
+
+        Color originalColor = spriteToFlash.color;
         float timer = 0f;
 
         while (timer < flashDuration)
         {
-            pacmanSprite.color = flashColor;
+            spriteToFlash.color = flashColor;
             yield return new WaitForSeconds(flashInterval);
-            pacmanSprite.color = originalColor;
+            spriteToFlash.color = originalColor;
             yield return new WaitForSeconds(flashInterval);
             timer += flashInterval * 2; // Add time for both flash on and off
         }
 
-        pacmanSprite.color = originalColor; // Ensure color is reset
+        spriteToFlash.color = originalColor; // Ensure color is reset
     }
     // -------------------------------------
 
