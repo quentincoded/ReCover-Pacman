@@ -14,6 +14,8 @@ public class LogicScript : MonoBehaviour
     public TextMeshProUGUI livesText; // <<< ADDED: Assign your Lives Text UI element in Inspector
     public GameObject gameOverPanel; // <<< ADDED: Assign your Game Over UI Panel in Inspector
     public GameObject PauseButton; // <<< ADDED: Assign your Pause Button in Inspector
+    
+    public GameObject[] heartSprites; // The size of this array should match the maximum number of lives  you want to display
     // --- Added for Sound ---
     public AudioClip coinSound; // Assign your coin sound clip in the Inspector
     public AudioClip gameOverSound; // Assign your game over sound clip in the Inspector
@@ -28,6 +30,7 @@ public class LogicScript : MonoBehaviour
         // Initialize UI display
         UpdateScoreText();
         UpdateLivesText(); 
+        UpdateLivesVisual();
         PauseButton.SetActive(true); // Hide Pause button at start
 
         // Ensure Game Over panel is hidden at start
@@ -69,6 +72,7 @@ public class LogicScript : MonoBehaviour
         playerLives--; // Decrement lives
         //could also play losing life/ hurt sound here but its in the Pacman script
         UpdateLivesText(); // Update UI
+        UpdateLivesVisual(); // Update visual representation of lives
 
         if (playerLives <= 0)
         {
@@ -82,7 +86,26 @@ public class LogicScript : MonoBehaviour
         if (livesText != null)
         {
             // You can format this however you like (e.g., use icons)
-            livesText.text = "Lives: " + playerLives.ToString();
+            livesText.text = playerLives.ToString();
+        }
+    }
+    public void UpdateLivesVisual()
+    {
+        // Ensure the heartSprites array is assigned and has elements
+        if (heartSprites == null || heartSprites.Length == 0)
+        {
+            Debug.LogWarning("Heart Sprites array is not assigned or is empty in LogicScript!");
+            return;
+        }
+
+        // Iterate through the heart sprites and enable/disable them
+        for (int i = 0; i < heartSprites.Length; i++)
+        {
+            // If the current index is less than the number of lives, the heart should be active
+            if (heartSprites[i] != null) // Add null check for safety
+            {
+                heartSprites[i].SetActive(i < playerLives);
+            }
         }
     }
     public void GameOver()
@@ -93,12 +116,13 @@ public class LogicScript : MonoBehaviour
         {
             gameOverPanel.SetActive(true);
             PauseButton.SetActive(false); // Hide Pause button when game is over
+            livesText.gameObject.SetActive(false); // Hide lives text when game is over
 
         }
         // Stop the game (pause time is a simple way)
         Time.timeScale = 0f; // Pauses FixedUpdate, Update calls tied to physics time.
         // NOTE: Input reading in Update might still occur, handle in PacmanScript if needed.
-        PlayGameOverSound(); 
+        PlayGameOverSound();
     }
 
     public void RestartGame()

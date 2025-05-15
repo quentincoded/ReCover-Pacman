@@ -250,6 +250,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Pacmanbody: {fileID: 116363331}
   moveSpeed: 5
+  logic: {fileID: 0}
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.5
+  flashInterval: 0.1
+  hurtSound: {fileID: 0}
+  invincibilityDuration: 1
+  mouthClosedSprite: {fileID: 0}
+  mouthQuarterClosedSprite: {fileID: 0}
+  mouthHalfOpenSprite: {fileID: 0}
+  mouthQuarterOpenSprite: {fileID: 0}
+  mouthOpenSprite: {fileID: 0}
 --- !u!58 &116363335
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -695,7 +706,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7614ed95e3d8347489a01096bcc5e421, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollSpeed: 1
   tileHeight: 10
 --- !u!4 &533772416
 Transform:
