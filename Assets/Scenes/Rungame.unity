@@ -14732,7 +14732,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameSpeed: 1
-  difficultyIncreaseRate: 0.2
+  difficultyIncreaseRate: 0
 --- !u!4 &2089323483
 Transform:
   m_ObjectHideFlags: 0
