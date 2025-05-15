@@ -13,6 +13,7 @@ public class LogicScript : MonoBehaviour
     public TextMeshProUGUI scoreText; // ← use TMP type here
     public TextMeshProUGUI livesText; // <<< ADDED: Assign your Lives Text UI element in Inspector
     public GameObject gameOverPanel; // <<< ADDED: Assign your Game Over UI Panel in Inspector
+    public GameObject PauseButton; // <<< ADDED: Assign your Pause Button in Inspector
     // --- Added for Sound ---
     public AudioClip coinSound; // Assign your coin sound clip in the Inspector
     public AudioClip gameOverSound; // Assign your game over sound clip in the Inspector
@@ -27,6 +28,7 @@ public class LogicScript : MonoBehaviour
         // Initialize UI display
         UpdateScoreText();
         UpdateLivesText(); 
+        PauseButton.SetActive(true); // Hide Pause button at start
 
         // Ensure Game Over panel is hidden at start
         if (gameOverPanel != null)
@@ -90,6 +92,8 @@ public class LogicScript : MonoBehaviour
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);
+            PauseButton.SetActive(false); // Hide Pause button when game is over
+
         }
         // Stop the game (pause time is a simple way)
         Time.timeScale = 0f; // Pauses FixedUpdate, Update calls tied to physics time.

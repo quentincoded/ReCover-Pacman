@@ -692,6 +692,54 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8685753568177903075, guid: c9fd40676bf935647a9c7aa0d87a506c, type: 3}
   m_PrefabInstance: {fileID: 842050685}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1631455494
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1631455496}
+  - component: {fileID: 1631455495}
+  m_Layer: 0
+  m_Name: BLEManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1631455495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1631455494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 694e700276419444d94040da231b2eb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serviceUUID: 9f3c872e-2f1b-4c58-bc2a-5a2e2f48f519
+  characteristicUUID: 2d8e1b65-9d11-43ea-b0f5-c51cb352ddfa
+  deviceName: ReCover
+  uiManager: {fileID: 0}
+--- !u!4 &1631455496
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1631455494}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 581.6048, y: 1109.0754, z: -445.42413}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!224 &1798239437 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6231179239140312498, guid: 1a35cadde24eba541a3b180c9cca041c, type: 3}
@@ -898,3 +946,4 @@ SceneRoots:
   - {fileID: 1135767432}
   - {fileID: 11398733}
   - {fileID: 791740225}
+  - {fileID: 1631455496}
