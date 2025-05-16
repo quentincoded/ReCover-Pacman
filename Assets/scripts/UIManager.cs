@@ -31,6 +31,9 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    // Singleton instance
+    public static UIManager Instance;
+
     // UI Fields for Connection Status and General Messages
     public TextMeshProUGUI connectionStatus;
     public TextMeshProUGUI messageText;
@@ -50,6 +53,28 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI mappedMouthValueText; // Display the normalized combined FSR/ToF value (0-1)
 
     public TextMeshProUGUI currentMouthStateText; // Display the current MouthState enum value
+
+    void Awake()
+    {
+        // Implement the Singleton pattern
+        if (Instance == null)
+        {
+            Instance = this;
+            // Optional: Keep the UIManager alive across scenes if needed,
+            // but typically a UIManager is scene-specific.
+            // If you need persistent UI elements, put them under a persistent Canvas.
+            // If each scene has its own UI, don't use DontDestroyOnLoad here.
+            // For this setup where BLEManager finds UIManager per scene, DontDestroyOnLoad is NOT needed for UIManager.
+            // DontDestroyOnLoad(gameObject);
+        }
+        else if (Instance != this) // If an instance already exists and it's not this one
+        {
+            // If a duplicate instance is found (from another scene), destroy it
+            Debug.LogWarning("Duplicate UIManager instance found, destroying this one.");
+            Destroy(gameObject);
+        }
+        // If Instance == this, it means this is the existing instance for this scene.
+    }
 
 
     // --- Methods to update UI fields ---

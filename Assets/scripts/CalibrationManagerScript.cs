@@ -240,6 +240,7 @@ public class CalibrationManagerScript : MonoBehaviour
         {
             // Map enum value to progress bar value (assuming enum order matches steps)
             progressBar.value = (int)completedStep;
+        }
     }
 
     // You might want a method to load calibration data in your main game scene
