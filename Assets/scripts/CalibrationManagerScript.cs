@@ -14,7 +14,7 @@ public class CalibrationManagerScript : MonoBehaviour
     public Slider progressBar; // Or public Image progressBarFill;
 
     // --- Calibration Settings ---
-    public float dataCollectionDuration = 5.0f; // How long to collect data for each step
+    public float dataCollectionDuration = 15.0f; // How long to collect data for each step
     public string nextSceneName = "MainGameScene"; // Name of the scene to load after calibration
 
     // --- Private Variables ---
@@ -29,7 +29,9 @@ public class CalibrationManagerScript : MonoBehaviour
     // --- PlayerPrefs Keys ---
     private const string MinPotKey = "MinPotValue";
     private const string MaxPotKey = "MaxPotValue";
+    private const string MinFsrKey = "MinFsrValue";
     private const string MaxFsrKey = "MaxFsrValue";
+    private const string MinTofKey = "MinTofValue";
     private const string MaxTofKey = "MaxTofValue";
 
     void Start()
@@ -81,24 +83,24 @@ public class CalibrationManagerScript : MonoBehaviour
              yield return null; // Wait a frame
         }
 
-        SetState(CalibrationState.PotLeft, "Step 1/3: Rotate potentiometer fully LEFT and HOLD it there for " + dataCollectionDuration.ToString("F1") + " seconds.");
+        SetState(CalibrationState.PotLeft, "Step 1/4: Rotate potentiometer fully LEFT and HOLD it there for " + dataCollectionDuration.ToString("F1") + " seconds.");
         yield return CollectDataForStep(CalibrationState.PotLeft);
 
-        SetState(CalibrationState.PotRight, "Step 2/3: Rotate potentiometer fully RIGHT and HOLD it there for " + dataCollectionDuration.ToString("F1") + " seconds.");
+        SetState(CalibrationState.PotRight, "Step 2/4: Rotate potentiometer fully RIGHT and HOLD it there for " + dataCollectionDuration.ToString("F1") + " seconds.");
         yield return CollectDataForStep(CalibrationState.PotRight);
 
-        SetState(CalibrationState.FingerRest, "Step 2.5/3: EXTEND your fingers fully and HOLD it there for " + dataCollectionDuration.ToString("F1") + " seconds.");
+        SetState(CalibrationState.FingerRest, "Step 3/4: Relax your fingers fully and HOLD it there for " + dataCollectionDuration.ToString("F1") + " seconds."); // Clarified instruction
         yield return CollectDataForStep(CalibrationState.FingerRest);
         
-        SetState(CalibrationState.FingerExtend, "Step 3/3: EXTEND your fingers fully and HOLD it there for " + dataCollectionDuration.ToString("F1") + " seconds.");
+        SetState(CalibrationState.FingerExtend, "Step 4/4: EXTEND your fingers fully and HOLD it there for " + dataCollectionDuration.ToString("F1") + " seconds.");
         yield return CollectDataForStep(CalibrationState.FingerExtend);
 
         SetState(CalibrationState.Complete, "Calibration Complete!");
         SaveCalibrationData();
 
-        yield return new WaitForSeconds(2.0f); // Show completion message for a bit
+        yield return new WaitForSeconds(10.0f); // Show completion message for a bit
 
-        // Load the next scene
+        // or load tutorial scene here???
         SceneManager.LoadSceneAsync(1); //main game
     }
 
@@ -162,6 +164,29 @@ public class CalibrationManagerScript : MonoBehaviour
                      Debug.LogWarning("No potentiometer data collected for PotRight step.");
                 }
                 break;
+            case CalibrationState.FingerRest:
+                // Calculate the average of collected FSR and TOF values
+                if (fsrValues.Count > 0)
+                {
+                    float averageMinFsr = fsrValues.Average(); // Use LINQ Average()
+                    PlayerPrefs.SetFloat(MinFsrKey, averageMinFsr);
+                    Debug.Log($"Calibrated Min FSR (Average): {averageMinFsr}");
+                }
+                else
+                {
+                     Debug.LogWarning("No FSR data collected for FingerRest step.");
+                }
+                if (tofValues.Count > 0)
+                {
+                    float averageMinTof = tofValues.Average(); // Use LINQ Average()
+                    PlayerPrefs.SetFloat(MinTofKey, averageMinTof);
+                    Debug.Log($"Calibrated Max ToF (Average): {averageMinTof}");
+                }
+                 else
+                {
+                     Debug.LogWarning("No TOF data collected for FingerRest step.");
+                }
+                break;
 
             case CalibrationState.FingerExtend:
                 // Calculate the average of collected FSR and TOF values
@@ -213,28 +238,15 @@ public class CalibrationManagerScript : MonoBehaviour
     {
         if (progressBar != null)
         {
-            switch (completedStep)
-            {
-                case CalibrationState.PotLeft:
-                    progressBar.value = 1;
-                    break;
-                case CalibrationState.PotRight:
-                    progressBar.value = 2;
-                    break;
-                case CalibrationState.FingerExtend:
-                    progressBar.value = 3;
-                    break;
-                case CalibrationState.FingerRest:
-                    progressBar.value = 4;
-                    break;
-                // Add more cases if you add more steps
-            }
-        }
+            // Map enum value to progress bar value (assuming enum order matches steps)
+            progressBar.value = (int)completedStep;
     }
 
     // You might want a method to load calibration data in your main game scene
     public static float GetMinPotValue() { return PlayerPrefs.GetFloat(MinPotKey, 0f); }
     public static float GetMaxPotValue() { return PlayerPrefs.GetFloat(MaxPotKey, 1023f); } // Use a reasonable default
+    public static float GetMinFsrValue() { return PlayerPrefs.GetFloat(MinFsrKey, 0f); } // Added GetMinFsrValue
     public static float GetMaxFsrValue() { return PlayerPrefs.GetFloat(MaxFsrKey, 1023f); } // Use a reasonable default
-    public static float GetMaxTofValue() { return PlayerPrefs.GetFloat(MaxTofKey, 1023f); } // Use a reasonable default
+    public static float GetMinTofValue() { return PlayerPrefs.GetFloat(MinTofKey, 0f); } // Added GetMinTofValue
+    public static float GetMaxTofValue() { return PlayerPrefs.GetFloat(MaxTofKey, 70f); } // Use a reasonable default (based on VL6180X range)
 }

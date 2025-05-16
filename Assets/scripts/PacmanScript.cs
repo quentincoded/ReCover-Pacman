@@ -34,6 +34,14 @@ public class PacmanScript : MonoBehaviour
     public float moveSpeed = 5f;   // Speed multiplier for movement
     private float moveInput;
     public LogicScript logic; // Assign this in the aInspector
+    // --- Control Mode ---
+    public bool useBLEControl = true; // Set this in the Inspector to switch between BLE and Keyboard
+
+    // --- References to Managers ---
+    private BLEManager bleManager;
+    private UIManager uiManager;
+    // ------------------------------
+    
     // --- Added for Feedback ---
     // public SpriteRenderer pacmanSprite; // Assign Pacman's SpriteRenderer here
     public Color flashColor = Color.red; // Color to flash to
@@ -60,6 +68,15 @@ public class PacmanScript : MonoBehaviour
     {
         get { return (int)currentMouthState >= (int)MouthState.HalfOpen; } // Cast to int for comparison
     }
+    // --- Calibrated Sensor Ranges (Loaded from PlayerPrefs) ---
+    private float minPotValue;
+    private float maxPotValue;
+    private float minFsrValue; 
+    private float maxFsrValue; 
+    private float minTofValue; 
+    private float maxTofValue;
+    // ----------------------------------------------------------
+
 
     void Start()
     {
@@ -80,24 +97,58 @@ public class PacmanScript : MonoBehaviour
         {
             Pacmanbody = GetComponent<Rigidbody2D>();
         }
-        
+
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
         }
-        // Add all mouth sprite GameObjects to the list
-        mouthSprites.Add(mouthClosedSprite);
-        mouthSprites.Add(mouthQuarterClosedSprite);
-        mouthSprites.Add(mouthHalfOpenSprite);
-        mouthSprites.Add(mouthQuarterOpenSprite);
-        mouthSprites.Add(mouthOpenSprite);
+        // // Add all mouth sprite GameObjects to the list
+        // mouthSprites.Add(mouthClosedSprite);
+        // mouthSprites.Add(mouthQuarterClosedSprite);
+        // mouthSprites.Add(mouthHalfOpenSprite);
+        // mouthSprites.Add(mouthQuarterOpenSprite);
+        // mouthSprites.Add(mouthOpenSprite);
+        // UpdateMouthVisual();
+        // --- Get Manager Instances ---
+        bleManager = BLEManager.Instance;
+        uiManager = UIManager.Instance; // Get UIManager instance (should be found by BLEManager on scene load)
+
+        if (bleManager == null)
+        {
+            Debug.LogWarning("BLEManager instance not found. BLE control will not be available.");
+            useBLEControl = false; // Fallback to keyboard if BLEManager is missing
+        }
+
+        if (uiManager == null)
+        {
+             Debug.LogWarning("UIManager instance not found. Debug UI will not be available.");
+        }
+        // -----------------------------
+
+        // --- Load Calibrated Values ---
+        LoadCalibrationValues();
+        // ------------------------------
+
+        // --- Added: Set initial mouth visual state ---
         UpdateMouthVisual();
+        // ---------------------------------------------
+
+        // --- IMPORTANT PHYSICS NOTE ---
+        // To prevent Pacman from spinning on collision,
+        // select the Player GameObject in the Inspector,
+        // find the Rigidbody 2D component, expand "Constraints",
+        // and check the "Freeze Rotation" checkbox for the Z-axis.
+        // ------------------------------
+        
     }
 
 
     void Update()
     {
+        float currentPotValue = BLEManager.Instance.latestPotValue;
+        float currentTofValue = BLEManager.Instance.latestTofValue;
+        float currentFsrValue = BLEManager.Instance.latestFsrValue;
         
         int superSize = 1; 
             if (Keyboard.current.pKey.wasPressedThisFrame)
