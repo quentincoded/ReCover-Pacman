@@ -274,6 +274,7 @@ public class CalibrationManagerScript : MonoBehaviour
     // --- Calibration Settings ---
     public float dataCollectionDuration = 15.0f; // How long to collect data for each step
     public string nextSceneName = "MainGameScene"; // Name of the scene to load after calibration
+    public TextMeshProUGUI progressHeader; // header text for progress bar
 
     // --- Instruction Sprites ---
     // Assign sprites for each calibration step in the Inspector
@@ -394,12 +395,17 @@ public class CalibrationManagerScript : MonoBehaviour
 
         // --- Calibration Complete ---
         SetState(CalibrationState.Complete, "Calibration Complete!");
-        if (instructionImage != null && completeSprite != null) instructionImage.sprite = completeSprite;
+        if (instructionImage != null && completeSprite != null)
+        { 
+            instructionImage.gameObject.SetActive(true);
+            instructionImage.sprite = completeSprite;
+        } 
         SaveCalibrationData();
 
         // Hide the button and progress bar on completion
         if (readyButton != null) readyButton.gameObject.SetActive(false);
         if (progressBar != null) progressBar.gameObject.SetActive(false);
+        if (progressHeader != null) progressHeader.gameObject.SetActive(false); // Hide progress header on completion
         if (rawValuesText != null) rawValuesText.gameObject.SetActive(false); // Hide raw values on completion
 
 
