@@ -243,9 +243,13 @@ public class PacmanScript : MonoBehaviour
 
             // Smoothly move Pacman towards the target X position
             // Using MoveTowards for simple smooth movement
-            Vector3 targetPosition = new Vector3(targetXPosition, Pacmanbody.position.y, Pacmanbody.position.z);
+            //fixes: 
+            Vector3 targetPosition = new Vector3(targetXPosition, Pacmanbody.position.y, transform.position.z);
             // You might need to adjust the speed multiplier here based on how quickly you want Pacman to track the potentiometer
             Pacmanbody.position = Vector3.MoveTowards(Pacmanbody.position, targetPosition, moveSpeed * Time.deltaTime);
+            // Vector3 targetPosition = new Vector3(targetXPosition, Pacmanbody.position.y, Pacmanbody.position.z);
+            // // You might need to adjust the speed multiplier here based on how quickly you want Pacman to track the potentiometer
+            // Pacmanbody.position = Vector3.MoveTowards(Pacmanbody.position, targetPosition, moveSpeed * Time.deltaTime);
 
             // Note: We are setting position directly, not using linearVelocity for this type of control.
             Pacmanbody.linearVelocity = Vector2.zero; // Stop any residual velocity
