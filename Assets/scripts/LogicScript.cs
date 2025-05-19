@@ -20,6 +20,7 @@ public class LogicScript : MonoBehaviour
     public AudioClip coinSound; // Assign your coin sound clip in the Inspector
     public AudioClip gameOverSound; // Assign your game over sound clip in the Inspector
     private AudioSource audioSource; // Reference to the AudioSource component
+    private const string HighScoreKey = "HighScore";
     // -----------------------
 
 
@@ -123,12 +124,35 @@ public class LogicScript : MonoBehaviour
         Time.timeScale = 0f; // Pauses FixedUpdate, Update calls tied to physics time.
         // NOTE: Input reading in Update might still occur, handle in PacmanScript if needed.
         PlayGameOverSound();
+        CheckAndSaveHighScore(playerScore);
     }
 
     public void RestartGame()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name); // Restart the game by reloading the current scene
+    }
+    // --- Added: High Score Methods ---
+    // Check if the current score is a new high score and save it
+    private void CheckAndSaveHighScore(int currentScore)
+    {
+        Debug.Log($"Started Highscore check: Current Score: {currentScore}");
+        int currentHighScore = GetHighScore(); // Get the existing high score
+        Debug.Log($"Current High Score: {currentHighScore}");
+        if (currentScore > currentHighScore)
+        {
+
+            PlayerPrefs.SetInt(HighScoreKey, currentScore); // Save the new high score
+            PlayerPrefs.Save(); // Ensure it's written to disk
+            Debug.Log($"New High Score: {currentScore}");
+        }
+    }
+
+    // Get the current high score from PlayerPrefs
+    public static int GetHighScore()
+    {
+        // Returns 0 if the HighScoreKey doesn't exist in PlayerPrefs
+        return PlayerPrefs.GetInt(HighScoreKey, 0);
     }
     
     void PlayCoinSound()

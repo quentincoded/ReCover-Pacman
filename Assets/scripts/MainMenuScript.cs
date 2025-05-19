@@ -9,10 +9,18 @@ public class Menu_and_pause_script : MonoBehaviour
     public GameObject pauseMenu;
     public GameObject mainMenu;
     public bool isPaused = false;
+    public TextMeshProUGUI highScoreText;
 
-    void start(){
-        pauseMenu.SetActive(false);
-        // mainMenu.SetActive(true);
+    void start()
+    {
+        // Note: Unity's Start method should be lowercase 's'
+        // Ensure pause menu is hidden and main menu is shown at the start of the scene
+        if (pauseMenu != null) pauseMenu.SetActive(false);
+        if (mainMenu != null) mainMenu.SetActive(true);
+
+        // --- Added: Display High Score on Main Menu ---
+        DisplayHighScore();
+        // --------------------------------------------
     }
 
     void update()
@@ -59,5 +67,18 @@ public class Menu_and_pause_script : MonoBehaviour
         Time.timeScale = 1f;
         SceneManager.LoadSceneAsync(0);
         isPaused = false;
+    }
+    void DisplayHighScore()
+    {
+        if (highScoreText != null)
+        {
+            // Get the high score using the static method from LogicScript
+            int highScore = LogicScript.GetHighScore();
+            highScoreText.text = "High Score: " + highScore.ToString();
+        }
+        else
+        {
+            Debug.LogWarning("High Score Text UI element is not assigned in the MainMenuScript!");
+        }
     }
 }
