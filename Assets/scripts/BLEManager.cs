@@ -534,23 +534,26 @@ public class BLEManager : MonoBehaviour
         {
             // Ensure the order matches what your ESP32 is sending
             // Assuming order is Pot (0-4095), FSR (0-4095), TOF (0-70mm) sent as floats
-             try
+            try
              {
-                latestPotValue = BitConverter.ToSingle(bytes, 0); // First 4 bytes for Pot
-                latestFsrValue = BitConverter.ToSingle(bytes, 4); // Next 4 bytes for FSR
+                // Corrected order to match ESP32: FSR, Pot, ToF
+                latestFsrValue = BitConverter.ToSingle(bytes, 0); // First 4 bytes for FSR
+                latestPotValue = BitConverter.ToSingle(bytes, 4); // Next 4 bytes for Pot
                 latestTofValue = BitConverter.ToSingle(bytes, 8); // Last 4 bytes for ToF
 
+
                 // Update UI message with the latest values (if UIManager is set up for this)
-                 if (uiManager != null && uiManager.messageText != null)
-                 {
-                      uiManager.UpdateMessage($"Pot: {latestPotValue:F2}, FSR: {latestFsrValue:F2}, ToF: {latestTofValue:F2}");
-                 }
-                 // Also update debug text if available
-                 if (uiManager != null && uiManager.debugText != null)
-                 {
-                     // You can put specific debug info here, or just echo the message
-                      uiManager.UpdateDebug($"Raw Data: {BitConverter.ToString(bytes)}");
-                 }
+                if (uiManager != null && uiManager.messageText != null)
+                {
+                    uiManager.UpdateMessage($"Pot: {latestPotValue:F2}, FSR: {latestFsrValue:F2}, ToF: {latestTofValue:F2}");
+                }
+                // Also update debug text if available
+                if (uiManager != null && uiManager.debugText != null)
+                {
+                    // You can put specific debug info here, or just echo the message
+                    uiManager.UpdateDebug($"dinimueter");
+                    // uiManager.UpdateDebug($"Raw Data: {BitConverter.ToString(bytes)}");
+                }
 
 
                 // You can also log the values to the console for debugging
