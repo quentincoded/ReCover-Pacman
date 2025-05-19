@@ -87,5 +87,6 @@ public class Menu_and_pause_script : MonoBehaviour
     {
         PlayerPrefs.DeleteAll();
         Debug.Log("PlayerPrefs reset");
+        DisplayHighScore();
     }
 }

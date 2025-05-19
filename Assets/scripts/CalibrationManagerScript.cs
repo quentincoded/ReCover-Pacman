@@ -386,7 +386,7 @@ public class CalibrationManagerScript : MonoBehaviour
         yield return CollectDataForStep(CalibrationStep.PotRight, "Hold potentiometer fully RIGHT..."); // Pass the specific step
 
         // --- Step 3: Finger Rest ---
-        yield return ShowInstructionAndAwaitReady("Step 3/4: Relax your fingers fully (or remove hand) and click Ready.", fingerRestSprite);
+        yield return ShowInstructionAndAwaitReady("Step 3/4: Relax your fingers fully and click Ready.", fingerRestSprite);
         yield return CollectDataForStep(CalibrationStep.FingerRest, "Hold fingers relaxed..."); // Pass the specific step
 
         // --- Step 4: Finger Extend ---

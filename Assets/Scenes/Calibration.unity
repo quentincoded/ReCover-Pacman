@@ -409,8 +409,8 @@ MonoBehaviour:
 
 '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7d78add73084c42479c4b5b787d2cd2f, type: 2}
+  m_sharedMaterial: {fileID: -5469466710010799819, guid: 7d78add73084c42479c4b5b787d2cd2f, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -434,8 +434,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 58.87
+  m_fontSizeBase: 58.87
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -931,9 +931,9 @@ MonoBehaviour:
   progressBar: {fileID: 925811708}
   readyButton: {fileID: 1546762834}
   instructionImage: {fileID: 405270427}
-  dataCollectionDuration: 5
+  dataCollectionDuration: 10
   nextSceneName: MainGameScene
-  progressHeader: {fileID: 0}
+  progressHeader: {fileID: 325739085}
   potLeftSprite: {fileID: 8010064798326771734, guid: 674688d82a55ab445b00e55711ce114f, type: 3}
   potRightSprite: {fileID: -470819864575067484, guid: 642b30b3e22073e4f87c9328bb54e270, type: 3}
   fingerRestSprite: {fileID: 9213219125017171, guid: 72884f8b093c4e64198d8881d5129204, type: 3}
