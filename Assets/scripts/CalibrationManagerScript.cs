@@ -406,7 +406,7 @@ public class CalibrationManagerScript : MonoBehaviour
         yield return new WaitForSeconds(3.0f); // Show completion message for a bit
 
         // Load the next scene
-        SceneManager.LoadSceneAsync(nextSceneName);
+        SceneManager.LoadSceneAsync(1);//main game
     }
 
     // --- Coroutine to show instruction, display button, and wait for click ---
