@@ -933,6 +933,7 @@ MonoBehaviour:
   instructionImage: {fileID: 405270427}
   dataCollectionDuration: 5
   nextSceneName: MainGameScene
+  progressHeader: {fileID: 0}
   potLeftSprite: {fileID: 8010064798326771734, guid: 674688d82a55ab445b00e55711ce114f, type: 3}
   potRightSprite: {fileID: -470819864575067484, guid: 642b30b3e22073e4f87c9328bb54e270, type: 3}
   fingerRestSprite: {fileID: 9213219125017171, guid: 72884f8b093c4e64198d8881d5129204, type: 3}
@@ -1133,10 +1134,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Instruction Text
+  m_text: Instruction     Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7d78add73084c42479c4b5b787d2cd2f, type: 2}
+  m_sharedMaterial: {fileID: -5469466710010799819, guid: 7d78add73084c42479c4b5b787d2cd2f, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

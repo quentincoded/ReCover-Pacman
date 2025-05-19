@@ -83,4 +83,9 @@ public class Menu_and_pause_script : MonoBehaviour
             Debug.LogWarning("High Score Text UI element is not assigned in the MainMenuScript!");
         }
     }
+    public void ResetPlayerPrefs()
+    {
+        PlayerPrefs.DeleteAll();
+        Debug.Log("PlayerPrefs reset");
+    }
 }
