@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.InputSystem; // Make sure this is included for the new Input System
 
 public class Menu_and_pause_script : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class Menu_and_pause_script : MonoBehaviour
     public bool isPaused = false;
     public TextMeshProUGUI highScoreText;
 
-    void start()
+    void Start()
     {
         // Note: Unity's Start method should be lowercase 's'
         // Ensure pause menu is hidden and main menu is shown at the start of the scene
@@ -23,9 +24,10 @@ public class Menu_and_pause_script : MonoBehaviour
         // --------------------------------------------
     }
 
-    void update()
+    void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        // UPDATED: Use the new Input System to check for Escape key press
+        if (Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             if (isPaused)
             {
