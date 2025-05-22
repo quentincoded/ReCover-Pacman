@@ -931,7 +931,7 @@ MonoBehaviour:
   progressBar: {fileID: 925811708}
   readyButton: {fileID: 1546762834}
   instructionImage: {fileID: 405270427}
-  dataCollectionDuration: 10
+  dataCollectionDuration: 6
   nextSceneName: MainGameScene
   progressHeader: {fileID: 325739085}
   potLeftSprite: {fileID: 8010064798326771734, guid: 674688d82a55ab445b00e55711ce114f, type: 3}
