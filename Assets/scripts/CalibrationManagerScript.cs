@@ -272,7 +272,7 @@ public class CalibrationManagerScript : MonoBehaviour
     private BLEManager bleManager; // Reference to your BLE Manager takes the instance of the BLEManager from main menu (singleton)
 
     // --- Calibration Settings ---
-    public float dataCollectionDuration = 15.0f; // How long to collect data for each step
+    public float dataCollectionDuration = 10.0f; // How long to collect data for each step
     public string nextSceneName = "MainGameScene"; // Name of the scene to load after calibration
     public TextMeshProUGUI progressHeader; // header text for progress bar
 
@@ -374,27 +374,27 @@ public class CalibrationManagerScript : MonoBehaviour
         }
 
         // Initial welcome message and ready button
-        yield return ShowInstructionAndAwaitReady("Welcome to Calibration!\nThis process will guide you through setting up your controller.\nClick Ready to begin.", null); // No specific image for welcome
+        yield return ShowInstructionAndAwaitReady("Willkomen zur Kalibration!\nZusammen setzen wir die Kontrolle des Spielers auf.\nDrücken Sie auf Ready um zu beginnen.", null); // No specific image for welcome
 
 
         // --- Step 1: Potentiometer Left ---
-        yield return ShowInstructionAndAwaitReady("Step 1/4: Rotate potentiometer fully LEFT and click Ready.", potLeftSprite);
-        yield return CollectDataForStep(CalibrationStep.PotLeft, "Hold potentiometer fully LEFT..."); // Pass the specific step
+        yield return ShowInstructionAndAwaitReady("Schritt 1/4 \n Drehen Sie Ihre Hand ganz nach LINKS und drücken Sie auf Ready", potLeftSprite);
+        yield return CollectDataForStep(CalibrationStep.PotLeft, "Ganz nach Links halten.."); // Pass the specific step
 
         // --- Step 2: Potentiometer Right ---
-        yield return ShowInstructionAndAwaitReady("Step 2/4: Rotate potentiometer fully RIGHT and click Ready.", potRightSprite);
-        yield return CollectDataForStep(CalibrationStep.PotRight, "Hold potentiometer fully RIGHT..."); // Pass the specific step
+        yield return ShowInstructionAndAwaitReady("Schritt 2/4 \n Drehen Sie Ihre Hand ganz nach RECHTS und drücken Sie auf Ready", potRightSprite);
+        yield return CollectDataForStep(CalibrationStep.PotRight, "Ganz nach RECHTS halten.."); // Pass the specific step
 
         // --- Step 3: Finger Rest ---
-        yield return ShowInstructionAndAwaitReady("Step 3/4: Relax your fingers fully and click Ready.", fingerRestSprite);
-        yield return CollectDataForStep(CalibrationStep.FingerRest, "Hold fingers relaxed..."); // Pass the specific step
+        yield return ShowInstructionAndAwaitReady("Schritt 3/4: Halten Sie ihre Finger in entspannter Position und drücken sie auf Ready.", fingerRestSprite);
+        yield return CollectDataForStep(CalibrationStep.FingerRest, "Finger entspannt halten...."); // Pass the specific step
 
         // --- Step 4: Finger Extend ---
-        yield return ShowInstructionAndAwaitReady("Step 4/4: EXTEND your fingers fully and click Ready.", fingerExtendSprite);
-        yield return CollectDataForStep(CalibrationStep.FingerExtend, "Hold fingers extended..."); // Pass the specific step
+        yield return ShowInstructionAndAwaitReady("Schritt 4/4: Spreizen Sie ihre Finger voll und drücken Sie auf Ready", fingerExtendSprite);
+        yield return CollectDataForStep(CalibrationStep.FingerExtend, "Finger gespreizt halten...."); // Pass the specific step
 
         // --- Calibration Complete ---
-        SetState(CalibrationState.Complete, "Calibration Complete!");
+        SetState(CalibrationState.Complete, "Kalibration Beendet!");
         if (instructionImage != null && completeSprite != null)
         { 
             instructionImage.gameObject.SetActive(true);
@@ -507,7 +507,7 @@ public class CalibrationManagerScript : MonoBehaviour
             }
             if (instructionText != null && currentState == CalibrationState.CollectingData)
             {
-                 instructionText.text = $"{holdInstruction} { (dataCollectionDuration - timer).ToString("F1") } seconds remaining.";
+                 instructionText.text = $"{holdInstruction} { (dataCollectionDuration - timer).ToString("F1") } Sekunden verbleiben!.";
             }
 
             yield return null; // Wait for the next frame

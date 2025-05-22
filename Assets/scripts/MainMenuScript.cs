@@ -11,6 +11,12 @@ public class Menu_and_pause_script : MonoBehaviour
     public GameObject mainMenu;
     public bool isPaused = false;
     public TextMeshProUGUI highScoreText;
+    public bool DebugTextFields = false; // Added for debug mode
+    public Button musicToggleButton; // Assign your music ON/OFF button (should have an Image component)
+
+    // --- New: Sprites for ON and OFF states of the music button ---
+    public Sprite musicOnSprite;  // Assign your photoshopped "Music ON" sprite here
+    public Sprite musicOffSprite; // Assign your photoshopped "Music OFF" sprite here
 
     void Start()
     {
@@ -21,6 +27,12 @@ public class Menu_and_pause_script : MonoBehaviour
 
         // --- Added: Display High Score on Main Menu ---
         DisplayHighScore();
+        if (MusicManager.Instance != null)
+        {
+            // MusicManager.Instance.PlayMusic(MusicManager.Instance.mainMenuCalibrationMusic);
+            UpdateMusicToggleButtonSprite(); // Update button sprite on start
+
+        }
         // --------------------------------------------
     }
 
@@ -49,6 +61,10 @@ public class Menu_and_pause_script : MonoBehaviour
     }
     public void QuitGame()
     {
+        if (MusicManager.Instance != null)
+        {
+            MusicManager.Instance.StopMusic();
+        }
         Application.Quit();
         Debug.Log("Quit");
     }
@@ -88,5 +104,45 @@ public class Menu_and_pause_script : MonoBehaviour
         PlayerPrefs.DeleteAll();
         Debug.Log("PlayerPrefs reset");
         DisplayHighScore();
+    }
+    public void turnOnDebugMode()
+    {
+        DebugTextFields = true;
+    }
+    public void turnOffDebugMode()
+    {
+        DebugTextFields = false;
+    }
+    public void ToggleGameMusic()
+    {
+        if (MusicManager.Instance != null)
+        {
+            MusicManager.Instance.ToggleMusic();
+            UpdateMusicToggleButtonSprite(); // Update button sprite after toggling
+        }
+    }
+    private void UpdateMusicToggleButtonSprite()
+    {
+        if (musicToggleButton != null && musicToggleButton.image != null && MusicManager.Instance != null)
+        {
+            bool isMusicOn = MusicManager.Instance.IsMusicOn();
+
+            if (isMusicOn && musicOnSprite != null)
+            {
+                musicToggleButton.image.sprite = musicOnSprite;
+            }
+            else if (!isMusicOn && musicOffSprite != null)
+            {
+                musicToggleButton.image.sprite = musicOffSprite;
+            }
+            else
+            {
+                Debug.LogWarning("Music ON/OFF sprite is not assigned or music state is unexpected.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Music Toggle Button or its Image component is not assigned or found!");
+        }
     }
 }
