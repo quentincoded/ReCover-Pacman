@@ -11,12 +11,18 @@ public class Menu_and_pause_script : MonoBehaviour
     public GameObject mainMenu;
     public bool isPaused = false;
     public TextMeshProUGUI highScoreText;
-    public bool DebugTextFields = false; // Added for debug mode
+    // public bool DebugTextFields = false; // Added for debug mode
     public Button musicToggleButton; // Assign your music ON/OFF button (should have an Image component)
 
     // --- New: Sprites for ON and OFF states of the music button ---
     public Sprite musicOnSprite;  // Assign your photoshopped "Music ON" sprite here
     public Sprite musicOffSprite; // Assign your photoshopped "Music OFF" sprite here
+    public bool isDebugModeOn = true; // Added for debug mode
+    public GameObject DebugTextFields; // Assign your debug text fields here
+    public Button debugToggleButton; // Assign your debug ON/OFF button (must have an Image component)
+    public Sprite debugOnSprite;   // Assign your "Debug ON" sprite here
+    public Sprite debugOffSprite;  // Assign your "Debug OFF" sprite here
+    
 
     void Start()
     {
@@ -33,6 +39,7 @@ public class Menu_and_pause_script : MonoBehaviour
             UpdateMusicToggleButtonSprite(); // Update button sprite on start
 
         }
+        
         // --------------------------------------------
     }
 
@@ -107,11 +114,25 @@ public class Menu_and_pause_script : MonoBehaviour
     }
     public void turnOnDebugMode()
     {
-        DebugTextFields = true;
+        isDebugModeOn = true;
+        updateDebugTextFields(isDebugModeOn);
     }
     public void turnOffDebugMode()
     {
-        DebugTextFields = false;
+        isDebugModeOn = false;
+        updateDebugTextFields(isDebugModeOn);
+    }
+    void updateDebugTextFields(bool isDebugModeOn)
+    {
+        if (DebugTextFields != null)
+        {
+            DebugTextFields.SetActive(isDebugModeOn);
+            // UpdateDebugToggleButtonSprite(); // Update button sprite after toggling
+        }
+        else
+        {
+            Debug.LogWarning("Debug Text Fields GameObject is not assigned!");
+        }
     }
     public void ToggleGameMusic()
     {
@@ -145,4 +166,5 @@ public class Menu_and_pause_script : MonoBehaviour
             Debug.LogWarning("Music Toggle Button or its Image component is not assigned or found!");
         }
     }
+    
 }

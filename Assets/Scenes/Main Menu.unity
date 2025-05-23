@@ -229,10 +229,14 @@ MonoBehaviour:
   mainMenu: {fileID: 0}
   isPaused: 0
   highScoreText: {fileID: 1164317982}
-  DebugTextFields: 0
   musicToggleButton: {fileID: 652971304}
   musicOnSprite: {fileID: -2079153411887947747, guid: 5423cf7f35c13b24b8fcc81d12a6d51f, type: 3}
   musicOffSprite: {fileID: -9217397399222355598, guid: 93e3b7c99176ecd49a3cfbedf4803cf6, type: 3}
+  isDebugModeOn: 1
+  DebugTextFields: {fileID: 0}
+  debugToggleButton: {fileID: 0}
+  debugOnSprite: {fileID: 0}
+  debugOffSprite: {fileID: 0}
 --- !u!114 &26787117
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1414,6 +1418,10 @@ PrefabInstance:
     - target: {fileID: 6275957333137088081, guid: f2bc8118f68c94a49b2e88061a07e78a, type: 3}
       propertyPath: m_Name
       value: UIManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 6275957333137088081, guid: f2bc8118f68c94a49b2e88061a07e78a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6598256066937507155, guid: f2bc8118f68c94a49b2e88061a07e78a, type: 3}
       propertyPath: m_LocalPosition.x

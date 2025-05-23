@@ -164,6 +164,8 @@ public class UIManager : MonoBehaviour
 
     public TextMeshProUGUI currentMouthStateText; // Display the current MouthState enum value
 
+    public GameObject[] debugUIElements; // Assign all debug TextMeshProUGUI GameObjects here in Inspector
+
     void Awake()
     {
         // Implement the Singleton pattern and make it persistent
@@ -182,7 +184,7 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-             Debug.Log("UIManager: Awake - Existing instance found.");
+            Debug.Log("UIManager: Awake - Existing instance found.");
         }
 
         // Get the Canvas component that is a child of this GameObject
@@ -202,7 +204,7 @@ public class UIManager : MonoBehaviour
         if (debugCanvas != null)
         {
             debugCanvas.gameObject.SetActive(true);
-             Debug.Log("UIManager: OnEnable - Debug Canvas set to Active.");
+            Debug.Log("UIManager: OnEnable - Debug Canvas set to Active.");
         }
     }
 
@@ -218,20 +220,20 @@ public class UIManager : MonoBehaviour
 
     void Start()
     {
-         Debug.Log("UIManager: Start");
-         // Ensure the debug Canvas is active when the script starts
-         if (debugCanvas != null)
-         {
-             debugCanvas.gameObject.SetActive(true);
-             Debug.Log("UIManager: Start - Debug Canvas set to Active.");
-         }
-         // Initial UI update (optional, BLEManager might update on connect/data)
-         UpdateConnectionStatus(false); // Assume disconnected initially
-         UpdateMessage("Waiting for BLE connection...");
-         UpdateRawValues(0, 0, 0);
-         UpdateCalibratedRanges(0, 0, 0, 0, 0, 0);
-         UpdateMappedValues(0, 0);
-         UpdateMouthState("Closed (No Data)");
+        Debug.Log("UIManager: Start");
+        // Ensure the debug Canvas is active when the script starts
+        if (debugCanvas != null)
+        {
+            debugCanvas.gameObject.SetActive(true);
+            Debug.Log("UIManager: Start - Debug Canvas set to Active.");
+        }
+        // Initial UI update (optional, BLEManager might update on connect/data)
+        UpdateConnectionStatus(false); // Assume disconnected initially
+        UpdateMessage("Waiting for BLE connection...");
+        UpdateRawValues(0, 0, 0);
+        UpdateCalibratedRanges(0, 0, 0, 0, 0, 0);
+        UpdateMappedValues(0, 0);
+        UpdateMouthState("Closed (No Data)");
     }
 
     // This method is called automatically when a new scene is loaded
@@ -308,4 +310,7 @@ public class UIManager : MonoBehaviour
     {
         if (currentMouthStateText != null) currentMouthStateText.text = $"Mouth State: {state}";
     }
+    
+
+    
 }
