@@ -6376,7 +6376,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 8, y: 1}
+  m_Size: {x: 6.72, y: 1}
   m_EdgeRadius: 0
 --- !u!82 &474358226
 AudioSource:

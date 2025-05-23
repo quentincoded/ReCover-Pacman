@@ -1,32 +1,5 @@
 // using UnityEngine;
 // using UnityEngine.InputSystem; // Required for the new Input System
-
-// public class PacmanScript : MonoBehaviour
-// {
-//     public Rigidbody2D Pacmanbody; // Reference to the Rigidbody2D component
-//     public float movespeed = 5f; // Speed of Pacman
-//     private float moveInput;
-//     // Start is called once before the first execution of Update after the MonoBehaviour is created
-//     void Start()
-//     {
-
-//     }
-
-//     // Update is called once per frame
-//     void Update()
-//     {
-//         // Read horizontal movement input
-//         moveInput = Keyboard.current.leftArrowKey.isPressed ? -1 :
-//                     Keyboard.current.rightArrowKey.isPressed ? 1 : 0;
-
-//         // Apply velocity to move Pacman left or right
-//         Pacmanbody.linearVelocity = new Vector2(moveInput * moveSpeed, Pacmanbody.linearVelocity.y);
-//     }
-// }
-
-// v2 but older not yet dontdestroy onload uimanger
-// using UnityEngine;
-// using UnityEngine.InputSystem; // Required for the new Input System
 // using System.Collections; // Required for Coroutines
 // using System.Collections.Generic; // Required for List
 
@@ -41,11 +14,13 @@
 
 //     // --- References to Managers ---
 //     private BLEManager bleManager;
-//     private UIManager uiManager;
+//     // REMOVED: private UIManager uiManager; // UIManager is now a persistent singleton accessed via Instance
 //     // ------------------------------
-    
+
 //     // --- Added for Feedback ---
-//     // public SpriteRenderer pacmanSprite; // Assign Pacman's SpriteRenderer here
+//     // Assign Pacman's main BODY SpriteRenderer here in the Inspector
+//     // This is now primarily a fallback or for visual effects not tied to mouth state
+//     public SpriteRenderer pacmanSprite;
 //     public Color flashColor = Color.red; // Color to flash to
 //     public float flashDuration = 0.5f; // Duration of the flash effect
 //     public float flashInterval = 0.1f; // Time between flashes
@@ -61,7 +36,7 @@
 //     public GameObject mouthHalfOpenSprite; // half open sprite GameObject
 //     public GameObject mouthQuarterOpenSprite; // mouth nearly open sprite GameObject
 //     public GameObject mouthOpenSprite; // mouth fully open sprite GameObject
-//     private List<GameObject> mouthSprites = new List<GameObject>();
+//     // Removed: private List<GameObject> mouthSprites = new List<GameObject>(); // This list isn't used in the current UpdateMouthVisual logic, removed
 
 //     public enum MouthState { Closed,QuarterClosed, HalfOpen, QuarterOpen, Open }; //0=closed, 1=quarter closed, 2=half open, 3=quarter open, 4=open
 //     private MouthState currentMouthState = MouthState.Closed;
@@ -73,9 +48,9 @@
 //     // --- Calibrated Sensor Ranges (Loaded from PlayerPrefs) ---
 //     private float minPotValue;
 //     private float maxPotValue;
-//     private float minFsrValue; 
-//     private float maxFsrValue; 
-//     private float minTofValue; 
+//     private float minFsrValue;
+//     private float maxFsrValue;
+//     private float minTofValue;
 //     private float maxTofValue;
 //     // ----------------------------------------------------------
 
@@ -100,32 +75,36 @@
 //             Pacmanbody = GetComponent<Rigidbody2D>();
 //         }
 
+//         // --- Removed: Ensure SpriteRenderer is assigned via GetComponent ---
+//         // Rely on assigning pacmanSprite in the Inspector
+//         if (pacmanSprite == null)
+//         {
+//              Debug.LogWarning("Pacman SpriteRenderer is not assigned in the Inspector! Flashing effect might not work.");
+//         }
+//         // -----------------------------------------------------------------
+
+//         // Get or add AudioSource component
 //         audioSource = GetComponent<AudioSource>();
 //         if (audioSource == null)
 //         {
 //             audioSource = gameObject.AddComponent<AudioSource>();
 //         }
-//         // // Add all mouth sprite GameObjects to the list
-//         // mouthSprites.Add(mouthClosedSprite);
-//         // mouthSprites.Add(mouthQuarterClosedSprite);
-//         // mouthSprites.Add(mouthHalfOpenSprite);
-//         // mouthSprites.Add(mouthQuarterOpenSprite);
-//         // mouthSprites.Add(mouthOpenSprite);
-//         // UpdateMouthVisual();
+
 //         // --- Get Manager Instances ---
 //         bleManager = BLEManager.Instance;
-//         uiManager = UIManager.Instance; // Get UIManager instance (should be found by BLEManager on scene load)
+//         // REMOVED: uiManager = UIManager.Instance; // UIManager is now accessed directly via UIManager.Instance
 
 //         if (bleManager == null)
 //         {
-//             Debug.LogWarning("BLEManager instance not found. BLE control will not be available.");
+//             Debug.LogWarning("BLEManager instance not found. BLE control and debug UI will not be available.");
 //             useBLEControl = false; // Fallback to keyboard if BLEManager is missing
 //         }
 
-//         if (uiManager == null)
-//         {
-//              Debug.LogWarning("UIManager instance not found. Debug UI will not be available.");
-//         }
+//         // UIManager reference is now obtained directly via UIManager.Instance
+//         // if (uiManager == null)
+//         // {
+//         //      Debug.LogWarning("UIManager instance not found. Debug UI will not be available.");
+//         // }
 //         // -----------------------------
 
 //         // --- Load Calibrated Values ---
@@ -142,14 +121,14 @@
 //         // find the Rigidbody 2D component, expand "Constraints",
 //         // and check the "Freeze Rotation" checkbox for the Z-axis.
 //         // ------------------------------
-        
+
 //     }
 
 
 //     void Update()
 //     {
-        
-//         int superSize = 1; 
+
+//         int superSize = 1;
 //             if (Keyboard.current.pKey.wasPressedThisFrame)
 //             {
 //             string filename = $"Screenshot_{System.DateTime.Now:yyyyMMdd_HHmmss}.png";
@@ -189,12 +168,14 @@
 //             // Ensure mouth is closed when game is paused
 //             currentMouthState = MouthState.Closed;
 //             UpdateMouthVisual();
-//             if (uiManager != null)
+//             // Clear debug UI when paused - now checks UIManager.Instance
+//             // UPDATED: Access UIManager via Instance
+//             if (UIManager.Instance != null)
 //             {
-//                 uiManager.UpdateRawValues(0, 0, 0);
-//                 uiManager.UpdateCalibratedRanges(0, 0, 0, 0, 0, 0); // Updated call
-//                 uiManager.UpdateMappedValues(0, 0); // Updated call
-//                 uiManager.UpdateMouthState(currentMouthState.ToString());
+//                 UIManager.Instance.UpdateRawValues(0, 0, 0);
+//                 UIManager.Instance.UpdateCalibratedRanges(0, 0, 0, 0, 0, 0); // Updated call
+//                 UIManager.Instance.UpdateMappedValues(0, 0); // Updated call
+//                 UIManager.Instance.UpdateMouthState(currentMouthState.ToString());
 //             }
 //         }
 //     }
@@ -205,7 +186,9 @@
 //         // Horizontal Movement
 //         float moveInput = Keyboard.current.leftArrowKey.isPressed ? -1 :
 //                           Keyboard.current.rightArrowKey.isPressed ? 1 : 0;
+//         // Fixed: Removed .z as Vector2 does not have a z component
 //         Pacmanbody.linearVelocity = new Vector2(moveInput * moveSpeed, Pacmanbody.linearVelocity.y);
+
 //         // Mouth Opening (Simple Open/Closed Toggle for Keyboard)
 //         if (Keyboard.current.upArrowKey.isPressed)
 //         {
@@ -245,13 +228,10 @@
 
 //             // Smoothly move Pacman towards the target X position
 //             // Using MoveTowards for simple smooth movement
-//             //fixes: 
+//             // Fixed: Use transform.position.z for the z-component
 //             Vector3 targetPosition = new Vector3(targetXPosition, Pacmanbody.position.y, transform.position.z);
 //             // You might need to adjust the speed multiplier here based on how quickly you want Pacman to track the potentiometer
 //             Pacmanbody.position = Vector3.MoveTowards(Pacmanbody.position, targetPosition, moveSpeed * Time.deltaTime);
-//             // Vector3 targetPosition = new Vector3(targetXPosition, Pacmanbody.position.y, Pacmanbody.position.z);
-//             // // You might need to adjust the speed multiplier here based on how quickly you want Pacman to track the potentiometer
-//             // Pacmanbody.position = Vector3.MoveTowards(Pacmanbody.position, targetPosition, moveSpeed * Time.deltaTime);
 
 //             // Note: We are setting position directly, not using linearVelocity for this type of control.
 //             Pacmanbody.linearVelocity = Vector2.zero; // Stop any residual velocity
@@ -335,23 +315,25 @@
 //         Debug.Log($"Loaded Calibration - MinPot: {minPotValue}, MaxPot: {maxPotValue}, MinFsr: {minFsrValue}, MaxFsr: {maxFsrValue}, MinToF: {minTofValue}, MaxToF: {maxTofValue}");
 
 //         // You might want to display these loaded values in the UI as well
-//         if (uiManager != null)
-//         {
-//              uiManager.UpdateCalibratedRanges(minPotValue, maxPotValue, minFsrValue, maxFsrValue, minTofValue, maxTofValue);
-//         }
+//         // This is now handled in UpdateDebugUI to ensure UIManager is ready
+//         // if (uiManager != null)
+//         // {
+//         //      uiManager.UpdateCalibratedRanges(minPotValue, maxPotValue, minFsrValue, maxFsrValue, minTofValue, maxTofValue);
+//         // }
 //     }
 //     // ----------------------------------------------
 
 //     // --- Update Debug UI with current sensor and mapping data ---
 //     void UpdateDebugUI()
 //     {
-//         if (uiManager != null && bleManager != null)
+//         // UPDATED: Access UIManager directly via Instance
+//         if (UIManager.Instance != null && bleManager != null)
 //         {
 //             // Update raw values
-//             uiManager.UpdateRawValues(bleManager.latestPotValue, bleManager.latestFsrValue, bleManager.latestTofValue);
+//             UIManager.Instance.UpdateRawValues(bleManager.latestPotValue, bleManager.latestFsrValue, bleManager.latestTofValue);
 
-//             // Update calibrated ranges (already done in LoadCalibrationValues, but can refresh if needed)
-//             // uiManager.UpdateCalibratedRanges(minPotValue, maxPotValue, minFsrValue, maxFsrValue, minTofValue, maxTofValue);
+//             // Update calibrated ranges (can be called once in Start or here if they can change)
+//             UIManager.Instance.UpdateCalibratedRanges(minPotValue, maxPotValue, minFsrValue, maxFsrValue, minTofValue, maxTofValue);
 
 //             // Calculate and update mapped values
 //             float rawPot = bleManager.latestPotValue;
@@ -371,18 +353,19 @@
 //             float combinedNormalizedMouth = (normalizedFsr + normalizedTof) / 2f;
 
 
-//             uiManager.UpdateMappedValues(targetXPosition, combinedNormalizedMouth); // Updated call
+//             UIManager.Instance.UpdateMappedValues(targetXPosition, combinedNormalizedMouth); // Updated call
 
 //             // Update mouth state
-//             uiManager.UpdateMouthState(currentMouthState.ToString());
+//             UIManager.Instance.UpdateMouthState(currentMouthState.ToString());
 //         }
-//         else if (uiManager != null)
+//         // Removed redundant else if (bleManager != null) block
+//         else if (UIManager.Instance != null) // If BLEManager is null (e.g., not in the scene or failed to initialize) but UIManager is present
 //         {
 //              // If BLEManager is not available, indicate that debug data is not live
-//              uiManager.UpdateRawValues(0, 0, 0);
-//              uiManager.UpdateCalibratedRanges(0, 0, 0, 0, 0, 0); // Updated call
-//              uiManager.UpdateMappedValues(0, 0); // Updated call
-//              uiManager.UpdateMouthState(currentMouthState.ToString() + " (Keyboard)");
+//              UIManager.Instance.UpdateRawValues(0, 0, 0);
+//              UIManager.Instance.UpdateCalibratedRanges(0, 0, 0, 0, 0, 0); // Updated call
+//              UIManager.Instance.UpdateMappedValues(0, 0); // Updated call
+//              UIManager.Instance.UpdateMouthState(currentMouthState.ToString() + " (Keyboard)");
 //         }
 //     }
 //     // ------------------------------------------------------------
@@ -416,10 +399,22 @@
 //             // --- Trigger Feedback Effects ---
 //             // Find the currently active mouth sprite's SpriteRenderer
 //             SpriteRenderer activeSpriteRenderer = GetActiveMouthSpriteRenderer();
+//             // Start the FlashEffect coroutine, passing the active sprite renderer
 //             if (activeSpriteRenderer != null)
 //             {
-//                 StartCoroutine(FlashEffect(activeSpriteRenderer)); // Start flashing the active sprite
+//                  StartCoroutine(FlashEffect(activeSpriteRenderer)); // Pass the active sprite renderer
 //             }
+//             // Fallback: If no active mouth sprite renderer is found, try flashing the main pacmanSprite
+//             else if (pacmanSprite != null)
+//             {
+//                  StartCoroutine(FlashEffect(pacmanSprite)); // Use the main pacmanSprite
+//             }
+//             else
+//             {
+//                  Debug.LogWarning("No active mouth sprite renderer or main pacmanSprite assigned for flashing effect!");
+//             }
+
+
 //             PlayHurtSound();
 //             StartCoroutine(GainInvincibility());
 //             // ------------------------------
@@ -428,6 +423,16 @@
 //     // Helper method to get the SpriteRenderer of the currently active mouth sprite
 //     private SpriteRenderer GetActiveMouthSpriteRenderer()
 //     {
+//         // List all mouth sprite GameObjects for easy iteration
+//         List<GameObject> mouthSprites = new List<GameObject>
+//         {
+//             mouthClosedSprite,
+//             mouthQuarterClosedSprite,
+//             mouthHalfOpenSprite,
+//             mouthQuarterOpenSprite,
+//             mouthOpenSprite
+//         };
+
 //         foreach (GameObject mouthSprite in mouthSprites)
 //         {
 //             // Check if the GameObject is assigned and is currently active in the hierarchy
@@ -442,6 +447,7 @@
 //     }
 
 //     // --- Coroutine for Flashing Effect ---
+//     // Modified to accept a SpriteRenderer parameter
 //     IEnumerator FlashEffect(SpriteRenderer spriteToFlash)
 //     {
 //         if (spriteToFlash == null) yield break; // Exit if no sprite renderer is provided
@@ -477,22 +483,30 @@
 //     {
 //         isInvincible = true;
 //         // Optional: Add visual indication for invincibility (e.g., semi-transparent sprite)
-//         // pacmanSprite.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0.5f); // Example semi-transparency
+//         // if (pacmanSprite != null) // Check if assigned before changing color
+//         // {
+//         //     Color originalColor = pacmanSprite.color; // Need to get original color if changing transparency here
+//         //     pacmanSprite.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0.5f); // Example semi-transparency
+//         // }
+
 
 //         yield return new WaitForSeconds(invincibilityDuration);
 
 //         isInvincible = false;
 //         // Optional: Reset visual indication
-//         // pacmanSprite.color = originalColor; // Example reset transparency
+//         // if (pacmanSprite != null) // Check if assigned before changing color
+//         // {
+//         //      pacmanSprite.color = originalColor; // Example reset transparency
+//         // }
 //     }
-    
-    
+
+
 //     // --- Method to update mouth visual based on currentMouthState ---
 //     void UpdateMouthVisual()
 //     {
 //         // Disable all mouth sprites first
 //         if (mouthClosedSprite != null) mouthClosedSprite.SetActive(false);
-//         if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(false); // Corrected Casing
+//         if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(false);
 //         if (mouthHalfOpenSprite != null) mouthHalfOpenSprite.SetActive(false);
 //         if (mouthQuarterOpenSprite != null) mouthQuarterOpenSprite.SetActive(false);
 //         if (mouthOpenSprite != null) mouthOpenSprite.SetActive(false);
@@ -505,34 +519,39 @@
 //                 if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true);
 //                 break;
 //             case MouthState.QuarterClosed:
-//                 if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true); // Corrected Casing
+//                 if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true);
 //                 else if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true); // Fallback
 //                 break;
 //             case MouthState.HalfOpen:
 //                 if (mouthHalfOpenSprite != null) mouthHalfOpenSprite.SetActive(true);
-//                  else if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true); // Fallback (Corrected Casing)
+//                  else if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true); // Fallback
 //                  else if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true); // Fallback
 //                 break;
 //             case MouthState.QuarterOpen:
 //                  if (mouthQuarterOpenSprite != null) mouthQuarterOpenSprite.SetActive(true);
 //                  else if (mouthHalfOpenSprite != null) mouthHalfOpenSprite.SetActive(true); // Fallback
-//                  else if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true); // Fallback (Corrected Casing)
+//                  else if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true); // Fallback
 //                  else if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true); // Fallback
 //                 break;
 //             case MouthState.Open:
 //                 if (mouthOpenSprite != null) mouthOpenSprite.SetActive(true);
 //                 else if (mouthQuarterOpenSprite != null) mouthQuarterOpenSprite.SetActive(true); // Fallback
 //                 else if (mouthHalfOpenSprite != null) mouthHalfOpenSprite.SetActive(true); // Fallback
-//                 else if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true); // Fallback (Corrected Casing)
+//                 else if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true); // Fallback
 //                 else if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true); // Fallback
 //                 break;
 //         }
 //         // Debug.Log("Mouth state updated to: " + currentMouthState); // Keep this for debugging if needed
 //     }
-    
+
 // }
 
-// -------------------------------------newest version
+//old versio with five sprites
+
+//----------------
+
+//new version with two sprites
+
 using UnityEngine;
 using UnityEngine.InputSystem; // Required for the new Input System
 using System.Collections; // Required for Coroutines
@@ -573,12 +592,16 @@ public class PacmanScript : MonoBehaviour
     public GameObject mouthOpenSprite; // mouth fully open sprite GameObject
     // Removed: private List<GameObject> mouthSprites = new List<GameObject>(); // This list isn't used in the current UpdateMouthVisual logic, removed
 
-    public enum MouthState { Closed,QuarterClosed, HalfOpen, QuarterOpen, Open }; //0=closed, 1=quarter closed, 2=half open, 3=quarter open, 4=open
+    public enum MouthState { Closed, Open }; // 0=closed, 1=open
+    //for five sprites:
+    // public enum MouthState { Closed,QuarterClosed, HalfOpen, QuarterOpen, Open }; //0=closed, 1=quarter closed, 2=half open, 3=quarter open, 4=open
+
     private MouthState currentMouthState = MouthState.Closed;
 
     public bool IsMouthOpen
     {
-        get { return (int)currentMouthState >= (int)MouthState.HalfOpen; } // Cast to int for comparison
+        get { return currentMouthState == MouthState.Open; }
+        // get { return (int)currentMouthState >= (int)MouthState.HalfOpen; } // Cast to int for comparison
     }
     // --- Calibrated Sensor Ranges (Loaded from PlayerPrefs) ---
     private float minPotValue;
@@ -614,7 +637,7 @@ public class PacmanScript : MonoBehaviour
         // Rely on assigning pacmanSprite in the Inspector
         if (pacmanSprite == null)
         {
-             Debug.LogWarning("Pacman SpriteRenderer is not assigned in the Inspector! Flashing effect might not work.");
+            Debug.LogWarning("Pacman SpriteRenderer is not assigned in the Inspector! Flashing effect might not work.");
         }
         // -----------------------------------------------------------------
 
@@ -664,12 +687,12 @@ public class PacmanScript : MonoBehaviour
     {
 
         int superSize = 1;
-            if (Keyboard.current.pKey.wasPressedThisFrame)
-            {
+        if (Keyboard.current.pKey.wasPressedThisFrame)
+        {
             string filename = $"Screenshot_{System.DateTime.Now:yyyyMMdd_HHmmss}.png";
             ScreenCapture.CaptureScreenshot(filename, superSize);
             Debug.Log($"Screenshot saved: {filename}");
-            }
+        }
 
 
         // Only allow movement if the game is not paused (Time.timeScale > 0)
@@ -786,7 +809,7 @@ public class PacmanScript : MonoBehaviour
         }
         else
         {
-             Debug.LogWarning("Main Camera not found! Cannot perform BLE horizontal mapping.");
+            Debug.LogWarning("Main Camera not found! Cannot perform BLE horizontal mapping.");
         }
         // -------------------------------------------------
 
@@ -810,25 +833,35 @@ public class PacmanScript : MonoBehaviour
 
         // Determine MouthState based on the combined normalized value (dividing 0-1 into 5 segments)
         // Adjust these thresholds based on your calibration and desired feel
-        if (combinedNormalizedMouth < 0.2f)
-        {
-            currentMouthState = MouthState.Closed;
-        }
-        else if (combinedNormalizedMouth < 0.4f)
-        {
-            currentMouthState = MouthState.QuarterClosed;
-        }
-        else if (combinedNormalizedMouth < 0.6f)
-        {
-            currentMouthState = MouthState.HalfOpen;
-        }
-        else if (combinedNormalizedMouth < 0.8f)
-        {
-            currentMouthState = MouthState.QuarterOpen;
-        }
-        else // combinedNormalizedMouth >= 0.8f
+        // for five different sprites:
+        // if (combinedNormalizedMouth < 0.2f)
+        // {
+        //     currentMouthState = MouthState.Closed;
+        // }
+        // else if (combinedNormalizedMouth < 0.4f)
+        // {
+        //     currentMouthState = MouthState.QuarterClosed;
+        // }
+        // else if (combinedNormalizedMouth < 0.6f)
+        // {
+        //     currentMouthState = MouthState.HalfOpen;
+        // }
+        // else if (combinedNormalizedMouth < 0.8f)
+        // {
+        //     currentMouthState = MouthState.QuarterOpen;
+        // }
+        // else // combinedNormalizedMouth >= 0.8f
+        // {
+        //     currentMouthState = MouthState.Open;
+        // }
+        //for only two sprites:
+        if (combinedNormalizedMouth >= 0.5f)
         {
             currentMouthState = MouthState.Open;
+        }
+        else // combinedNormalizedMouth < 0.5f
+        {
+            currentMouthState = MouthState.Closed;
         }
         // ------------------------------------------
     }
@@ -896,11 +929,11 @@ public class PacmanScript : MonoBehaviour
         // Removed redundant else if (bleManager != null) block
         else if (UIManager.Instance != null) // If BLEManager is null (e.g., not in the scene or failed to initialize) but UIManager is present
         {
-             // If BLEManager is not available, indicate that debug data is not live
-             UIManager.Instance.UpdateRawValues(0, 0, 0);
-             UIManager.Instance.UpdateCalibratedRanges(0, 0, 0, 0, 0, 0); // Updated call
-             UIManager.Instance.UpdateMappedValues(0, 0); // Updated call
-             UIManager.Instance.UpdateMouthState(currentMouthState.ToString() + " (Keyboard)");
+            // If BLEManager is not available, indicate that debug data is not live
+            UIManager.Instance.UpdateRawValues(0, 0, 0);
+            UIManager.Instance.UpdateCalibratedRanges(0, 0, 0, 0, 0, 0); // Updated call
+            UIManager.Instance.UpdateMappedValues(0, 0); // Updated call
+            UIManager.Instance.UpdateMouthState(currentMouthState.ToString() + " (Keyboard)");
         }
     }
     // ------------------------------------------------------------
@@ -937,16 +970,16 @@ public class PacmanScript : MonoBehaviour
             // Start the FlashEffect coroutine, passing the active sprite renderer
             if (activeSpriteRenderer != null)
             {
-                 StartCoroutine(FlashEffect(activeSpriteRenderer)); // Pass the active sprite renderer
+                StartCoroutine(FlashEffect(activeSpriteRenderer)); // Pass the active sprite renderer
             }
             // Fallback: If no active mouth sprite renderer is found, try flashing the main pacmanSprite
             else if (pacmanSprite != null)
             {
-                 StartCoroutine(FlashEffect(pacmanSprite)); // Use the main pacmanSprite
+                StartCoroutine(FlashEffect(pacmanSprite)); // Use the main pacmanSprite
             }
             else
             {
-                 Debug.LogWarning("No active mouth sprite renderer or main pacmanSprite assigned for flashing effect!");
+                Debug.LogWarning("No active mouth sprite renderer or main pacmanSprite assigned for flashing effect!");
             }
 
 
@@ -1041,9 +1074,6 @@ public class PacmanScript : MonoBehaviour
     {
         // Disable all mouth sprites first
         if (mouthClosedSprite != null) mouthClosedSprite.SetActive(false);
-        if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(false);
-        if (mouthHalfOpenSprite != null) mouthHalfOpenSprite.SetActive(false);
-        if (mouthQuarterOpenSprite != null) mouthQuarterOpenSprite.SetActive(false);
         if (mouthOpenSprite != null) mouthOpenSprite.SetActive(false);
 
 
@@ -1053,30 +1083,52 @@ public class PacmanScript : MonoBehaviour
             case MouthState.Closed:
                 if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true);
                 break;
-            case MouthState.QuarterClosed:
-                if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true);
-                else if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true); // Fallback
-                break;
-            case MouthState.HalfOpen:
-                if (mouthHalfOpenSprite != null) mouthHalfOpenSprite.SetActive(true);
-                 else if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true); // Fallback
-                 else if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true); // Fallback
-                break;
-            case MouthState.QuarterOpen:
-                 if (mouthQuarterOpenSprite != null) mouthQuarterOpenSprite.SetActive(true);
-                 else if (mouthHalfOpenSprite != null) mouthHalfOpenSprite.SetActive(true); // Fallback
-                 else if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true); // Fallback
-                 else if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true); // Fallback
-                break;
             case MouthState.Open:
                 if (mouthOpenSprite != null) mouthOpenSprite.SetActive(true);
-                else if (mouthQuarterOpenSprite != null) mouthQuarterOpenSprite.SetActive(true); // Fallback
-                else if (mouthHalfOpenSprite != null) mouthHalfOpenSprite.SetActive(true); // Fallback
-                else if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true); // Fallback
-                else if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true); // Fallback
                 break;
         }
         // Debug.Log("Mouth state updated to: " + currentMouthState); // Keep this for debugging if needed
     }
+    // void UpdateMouthVisual() for five different sprites
+    // {
+    //     // Disable all mouth sprites first
+    //     if (mouthClosedSprite != null) mouthClosedSprite.SetActive(false);
+    //     if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(false);
+    //     if (mouthHalfOpenSprite != null) mouthHalfOpenSprite.SetActive(false);
+    //     if (mouthQuarterOpenSprite != null) mouthQuarterOpenSprite.SetActive(false);
+    //     if (mouthOpenSprite != null) mouthOpenSprite.SetActive(false);
+
+
+    //     // Enable the current mouth sprite based on the state
+    //     switch (currentMouthState)
+    //     {
+    //         case MouthState.Closed:
+    //             if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true);
+    //             break;
+    //         case MouthState.QuarterClosed:
+    //             if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true);
+    //             else if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true); // Fallback
+    //             break;
+    //         case MouthState.HalfOpen:
+    //             if (mouthHalfOpenSprite != null) mouthHalfOpenSprite.SetActive(true);
+    //              else if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true); // Fallback
+    //              else if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true); // Fallback
+    //             break;
+    //         case MouthState.QuarterOpen:
+    //              if (mouthQuarterOpenSprite != null) mouthQuarterOpenSprite.SetActive(true);
+    //              else if (mouthHalfOpenSprite != null) mouthHalfOpenSprite.SetActive(true); // Fallback
+    //              else if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true); // Fallback
+    //              else if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true); // Fallback
+    //             break;
+    //         case MouthState.Open:
+    //             if (mouthOpenSprite != null) mouthOpenSprite.SetActive(true);
+    //             else if (mouthQuarterOpenSprite != null) mouthQuarterOpenSprite.SetActive(true); // Fallback
+    //             else if (mouthHalfOpenSprite != null) mouthHalfOpenSprite.SetActive(true); // Fallback
+    //             else if (mouthQuarterClosedSprite != null) mouthQuarterClosedSprite.SetActive(true); // Fallback
+    //             else if (mouthClosedSprite != null) mouthClosedSprite.SetActive(true); // Fallback
+    //             break;
+    //     }
+    //     // Debug.Log("Mouth state updated to: " + currentMouthState); // Keep this for debugging if needed
+    // }
 
 }
