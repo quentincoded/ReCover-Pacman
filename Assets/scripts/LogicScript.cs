@@ -74,11 +74,9 @@ public class LogicScript : MonoBehaviour
         //could also play losing life/ hurt sound here but its in the Pacman script
         UpdateLivesText(); // Update UI
         UpdateLivesVisual(); // Update visual representation of lives
-        if (Application.isMobilePlatform)
-        {
-            Handheld.Vibrate();
-            Debug.Log("Phone vibrated due to losing a life.");
-        }
+        Handheld.Vibrate();
+        Debug.Log("Phone vibrated due to losing a life.");
+        
 
         if (playerLives <= 0)
         {

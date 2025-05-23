@@ -1032,10 +1032,14 @@ MonoBehaviour:
   mainMenu: {fileID: 0}
   isPaused: 0
   highScoreText: {fileID: 0}
-  DebugTextFields: 0
   musicToggleButton: {fileID: 184508576}
   musicOnSprite: {fileID: -2079153411887947747, guid: 5423cf7f35c13b24b8fcc81d12a6d51f, type: 3}
   musicOffSprite: {fileID: -9217397399222355598, guid: 93e3b7c99176ecd49a3cfbedf4803cf6, type: 3}
+  isDebugModeOn: 1
+  DebugTextFields: {fileID: 0}
+  debugToggleButton: {fileID: 0}
+  debugOnSprite: {fileID: 0}
+  debugOffSprite: {fileID: 0}
 --- !u!4 &791740225
 Transform:
   m_ObjectHideFlags: 0
@@ -1818,7 +1822,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
