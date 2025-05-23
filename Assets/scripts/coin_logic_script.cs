@@ -31,7 +31,7 @@ public class coin_logic_script : MonoBehaviour
     //         logic.addScore(1); // Call the addScore method from LogicScript
 
     //     }
-        
+
     // }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -39,7 +39,12 @@ public class coin_logic_script : MonoBehaviour
 
         // Check if the colliding object is Pacman (assuming Layer 3 is Pacman's layer)
         if (collision.gameObject.layer == 3)
-        {
+        {   
+            if (collision.gameObject.CompareTag("Ghost")) // Check if it's a Ghost by tag
+            {
+            Debug.Log("Coin collided with a Ghost. Destroying coin: " + gameObject.name);
+            Destroy(gameObject); // Destroy the coin if it touches a ghost
+            }
             // --- Added: Get the PacmanScript component from the colliding object ---
             PacmanScript pacman = collision.gameObject.GetComponent<PacmanScript>();
             // ---------------------------------------------------------------------
@@ -56,5 +61,10 @@ public class coin_logic_script : MonoBehaviour
             }
             // If Pacman's mouth is not open, the coin is not collected and remains
         }
+        // else if (collision.gameObject.CompareTag("Ghost")) // Check if it's a Ghost by tag
+        // {
+        //     Debug.Log("Coin collided with a Ghost. Destroying coin: " + gameObject.name);
+        //     Destroy(gameObject); // Destroy the coin if it touches a ghost
+        // }
     }
 }
