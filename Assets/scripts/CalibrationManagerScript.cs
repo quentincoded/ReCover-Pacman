@@ -385,13 +385,15 @@ public class CalibrationManagerScript : MonoBehaviour
         yield return ShowInstructionAndAwaitReady("Schritt 2/4 \n Drehen Sie Ihre Hand ganz nach RECHTS und drücken Sie auf Ready", potRightSprite);
         yield return CollectDataForStep(CalibrationStep.PotRight, "Ganz nach RECHTS halten.."); // Pass the specific step
 
-        // --- Step 3: Finger Rest ---
-        yield return ShowInstructionAndAwaitReady("Schritt 3/4: Halten Sie ihre Finger in entspannter Position und drücken sie auf Ready.", fingerRestSprite);
+        // --- Step 3: Finger Extend ---
+        yield return ShowInstructionAndAwaitReady("Schritt 3/4: Spreizen Sie ihre Finger voll und drücken Sie auf Ready", fingerExtendSprite);
+        yield return CollectDataForStep(CalibrationStep.FingerExtend, "Finger gespreizt halten...."); // Pass the specific step
+
+        // --- Step 4: Finger Rest ---
+        yield return ShowInstructionAndAwaitReady("Schritt 4/4: Halten Sie ihre Finger in entspannter Position und drücken sie auf Ready.", fingerRestSprite);
         yield return CollectDataForStep(CalibrationStep.FingerRest, "Finger entspannt halten...."); // Pass the specific step
 
-        // --- Step 4: Finger Extend ---
-        yield return ShowInstructionAndAwaitReady("Schritt 4/4: Spreizen Sie ihre Finger voll und drücken Sie auf Ready", fingerExtendSprite);
-        yield return CollectDataForStep(CalibrationStep.FingerExtend, "Finger gespreizt halten...."); // Pass the specific step
+        
 
         // --- Calibration Complete ---
         SetState(CalibrationState.Complete, "Kalibration Beendet!");
@@ -500,8 +502,9 @@ public class CalibrationManagerScript : MonoBehaviour
                  {
                      case CalibrationStep.PotLeft: overallProgress = 0 + stepProgress; break;
                      case CalibrationStep.PotRight: overallProgress = 1 + stepProgress; break;
-                     case CalibrationStep.FingerRest: overallProgress = 2 + stepProgress; break;
-                     case CalibrationStep.FingerExtend: overallProgress = 3 + stepProgress; break;
+                     case CalibrationStep.FingerExtend: overallProgress = 2 + stepProgress; break;
+                     case CalibrationStep.FingerRest: overallProgress = 3 + stepProgress; break;
+                     
                  }
                  progressBar.value = overallProgress;
             }
