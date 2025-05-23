@@ -143,6 +143,7 @@ public class UIManager : MonoBehaviour
 
     // Reference to the Canvas containing the debug UI
     private Canvas debugCanvas;
+    private Canvas mainConnectionCanvas; // Reference to the Canvas for MAIN_CONNECTION
 
     // UI Fields for Connection Status and General Messages
     public TextMeshProUGUI connectionStatus;
@@ -163,6 +164,7 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI mappedMouthValueText; // Display the normalized combined FSR/ToF value (0-1)
 
     public TextMeshProUGUI currentMouthStateText; // Display the current MouthState enum value
+    public TextMeshProUGUI MAIN_CONNECTION; // Assign in Inspector
 
     public GameObject[] debugUIElements; // Assign all debug TextMeshProUGUI GameObjects here in Inspector
 
@@ -192,6 +194,20 @@ public class UIManager : MonoBehaviour
         if (debugCanvas == null)
         {
             Debug.LogError("UIManager: Awake - Could not find a Canvas component as a child!");
+        }
+        // Find the Canvas for MAIN_CONNECTION and make it persistent
+        if (MAIN_CONNECTION != null)
+        {
+            mainConnectionCanvas = MAIN_CONNECTION.GetComponentInParent<Canvas>(true);
+            if (mainConnectionCanvas != null && mainConnectionCanvas.gameObject != this.gameObject) // Ensure it's not the UIManager itself
+            {
+                DontDestroyOnLoad(mainConnectionCanvas.gameObject);
+                Debug.Log($"UIManager: Awake - Made Canvas '{mainConnectionCanvas.name}' for MAIN_CONNECTION persistent.");
+            }
+            else if (mainConnectionCanvas == null)
+            {
+                Debug.LogWarning("UIManager: MAIN_CONNECTION's Canvas component not found in parent. Ensure it's part of a Canvas.");
+            }
         }
     }
 
@@ -264,6 +280,12 @@ public class UIManager : MonoBehaviour
         if (connectionStatus != null)
         {
             connectionStatus.text = connected ? "Connected" : "Disconnected";
+            
+        }
+        if (MAIN_CONNECTION != null)
+        {
+            MAIN_CONNECTION.text = connected ? "Connected" : "Disconnected";
+            MAIN_CONNECTION.color = connected ? Color.green : Color.red;
         }
     }
 
